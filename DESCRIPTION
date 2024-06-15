@@ -1,0 +1,11 @@
+Package: correctedC
+Title: Compute C index for various survival models.
+Version: 0.0.0.9000
+Authors@R: 
+    person("Yushu", "Shi", , "shiyushu2006@gmail.com", role = c("aut", "cre"))
+Description: The package computes c-index for various survival models and provides bootstrap confidence intervals.
+License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+    license
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
