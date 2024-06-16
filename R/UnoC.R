@@ -79,7 +79,7 @@ bootSample<-function(time,event,predicted,seed,tau=NULL){
 bootUnoC<-function(time,event,predicted,B=1000,parallel=TRUE,numCore=NULL,tau=NULL){
   if(parallel){
     if(is.null(numCore)){
-      numCore<-detectCores()
+      numCore<-parallelly::availableCores()
     }
     registerDoParallel(numCore)
     result<-foreach(seedNum=1:B,.combine=c,.packages=c("survival")) %dopar% {

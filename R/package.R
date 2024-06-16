@@ -7,4 +7,5 @@
 #' @import survival
 #' @import foreach
 #' @import doParallel
+#' @importFrom parallelly availableCores
 NULL
