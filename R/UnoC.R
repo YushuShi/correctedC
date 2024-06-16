@@ -59,7 +59,7 @@ bootSample<-function(time,event,predicted,seed,tau=NULL){
 #' @param time The vector of the observed times.
 #' @param event The vector of events, 1 for event, 0 for censored.
 #' @param predicted The predicted value varies depending on the model used. For a Cox model, the predicted value is the linear combination of the predictors. For a random survival forests model, the predicted value is the predicted mortality, which represents the number of events in the dataset if all observations had this set of predictors. For survival models using the `survivalmodels` package, the predicted value is the risk, defined as the rank of the negative mean survival time. Generally, a higher predicted value indicates worse survival.
-#' @param R The number of bootstrap samples.
+#' @param B The number of bootstrap samples.
 #' @param parallel Whether to use parallel processing.
 #' @param numCore The number of cores to use. If NULL, the number of cores is detected.
 #' @param tau The truncation point, the default is the largest event time.
@@ -77,20 +77,20 @@ bootSample<-function(time,event,predicted,seed,tau=NULL){
 #' @import foreach
 #' @import doParallel
 #' @export
-bootUnoC<-function(time,event,predicted,R=1000,parallel=TRUE,numCore=NULL,tau=NULL){
+bootUnoC<-function(time,event,predicted,B=1000,parallel=TRUE,numCore=NULL,tau=NULL){
   if(parallel==TRUE){
     if(is.null(numCore)){
       numCore<-detectCores()
     }
     registerDoParallel(numCore)
-    result<-foreach(seedNum=1:R,.combine=c,.packages=c("survival")) %dopar% {
+    result<-foreach(seedNum=1:B,.combine=c,.packages=c("survival")) %dopar% {
       bootUnoC(time,event,predicted,seedNum,tau)}
     stopCluster(numCore)
     registerDoSEQ()
     rm(numCore)
     gc()
   }else{
-    result<-foreach(seedNum=1:R,.combine=c,.packages=c("survival")) %do% {
+    result<-foreach(seedNum=1:B,.combine=c,.packages=c("survival")) %do% {
       bootUnoC(time,event,predicted,seedNum,tau)}
   }
   result
