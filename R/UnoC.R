@@ -1,10 +1,11 @@
 num_denom_calc <- function(I, time, predicted, tau, event, censSurv) {
   sum1 <- sum((time[I] < time)* (predicted[I] > predicted))
   sum2 <- sum((time[I] < time))
-  sum1<-sum1*(time[I]<tau)
-  sum2<-sum2*(time[I]<tau)
-  c(num = sum1 * event[I] / (censSurv$surv[I])^2,
-    denom = sum2 * event[I] / (censSurv$surv[I])^2)
+  sum1<-sum1*(time[I]<tau)* event[I]
+  sum2<-sum2*(time[I]<tau)* event[I]
+  # if the last observation is event, then last event's G(t) will be 0
+  c(num = ifelse(censSurv$surv[I],sum1/(censSurv$surv[I])^2,0),
+    denom =ifelse(censSurv$surv[I],sum2/(censSurv$surv[I])^2,0))
 }
 
 #' Uno type C-index
@@ -41,10 +42,8 @@ UnoC<-function(time,event,predicted,tau=NULL){
   # if the last observation is event, then last event's G(t) will be 0
 
   results <- sapply(1:length(time), num_denom_calc, time = time, predicted = predicted, tau = tau, event = event, censSurv = censSurv)
-
   num <- sum(results[1, ],na.rm=TRUE)
   denom <- sum(results[2, ],na.rm=TRUE)
-
   num/denom
 }
   
@@ -78,20 +77,20 @@ bootSample<-function(time,event,predicted,seed,tau=NULL){
 #' @import doParallel
 #' @export
 bootUnoC<-function(time,event,predicted,B=1000,parallel=TRUE,numCore=NULL,tau=NULL){
-  if(parallel==TRUE){
+  if(parallel){
     if(is.null(numCore)){
       numCore<-detectCores()
     }
     registerDoParallel(numCore)
     result<-foreach(seedNum=1:B,.combine=c,.packages=c("survival")) %dopar% {
-      bootUnoC(time,event,predicted,seedNum,tau)}
-    stopCluster(numCore)
+      bootSample(time,event,predicted,seedNum,tau)}
+   # stopCluster(numCore)
     registerDoSEQ()
     rm(numCore)
     gc()
   }else{
     result<-foreach(seedNum=1:B,.combine=c,.packages=c("survival")) %do% {
-      bootUnoC(time,event,predicted,seedNum,tau)}
+      bootSample(time,event,predicted,seedNum,tau)}
   }
   result
 }
