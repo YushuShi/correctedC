@@ -23,6 +23,8 @@ UnoC(time,event,predicted,tau=NULL)
 ### Output
 The estimated Uno-type C-index
 
+
+
 ```
 bootUnoC(time,event,predicted,B=1000,parallel=TRUE,numCore=NULL,tau=NULL)
 ```
