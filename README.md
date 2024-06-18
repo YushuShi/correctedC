@@ -10,6 +10,32 @@
 library(devtools)
 install_github("YushuShi/correctedC")
 ```
+## Usage
+
+```
+UnoC(time,event,predicted,tau=NULL)
+```
+* **time** The vector of the event times.
+* **event** The vector of events, 1 for the event, 0 for censored.
+* **predicted** The predicted value varies depending on the model used. For a Cox model, the predicted value is the linear combination of the predictors. For a random survival forests model, the predicted value is the predicted mortality, which represents the number of events in the dataset if all observations had this set of predictors. For survival models using the `survivalmodels` package, the predicted value is the risk, defined as the rank of the negative mean survival time. Generally, a higher predicted value indicates worse survival.
+* **tau** The truncation point, the default is the largest event time.
+
+## Output
+* **UnoC** The estimated Uno-type C-index
+
+```
+bootUnoC(time,event,predicted,B=1000,parallel=TRUE,numCore=NULL,tau=NULL)
+```
+* **B** The number of bootstrap samples.
+* **parallel** Whether to use parallel processing. The default is TRUE.
+* **numCore** The number of cores to use. If NULL, the number of cores is detected.
+
+## Output
+
+* **bootUnoC** A vector of bootstrap samples of Uno-type C-index
+
+## Reference
+Uno H, Cai T, Pencina MJ, D'Agostino RB, Wei LJ. On the C-statistics for evaluating overall adequacy of risk prediction procedures with censored survival data. Stat Med. 2011 May 10;30(10):1105-17. doi: 10.1002/sim.4154. Epub 2011 Jan 13. PMID: 21484848; PMCID: PMC3079915.
 
 ## Examples
 ```
